@@ -87,7 +87,7 @@ class NotesScreenStateManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  void onTapNavBar(int index) {
+  void onTapDrawer(int index) {
     _selectedTab = index;
     _dropDownValue = 5;
     notifyListeners();

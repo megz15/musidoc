@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:musi_doc/components/bottom_options.dart';
 import 'package:musi_doc/models/notes_screen_state_manager.dart';
 import 'screens.dart';
 
@@ -20,36 +19,43 @@ class NotesScreen extends ConsumerWidget {
     return DefaultTabController(
       length: 4,
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('MusiDoc'),
-          actions: [
-            if (appStateNotifier.selectedTab == 0)
-              BottomOptions(
-                dropDownValue: appStateNotifier.dropDownValue,
-                onDropdownChange: (newValue) =>
-                    appStateNotifier.changeDropdownValue(newValue),
-                onMinusTap: () => appStateNotifier.changeAlapNotes("rem"),
-                onPlusTap: () => appStateNotifier.changeAlapNotes("add"),
+        appBar: AppBar(title: const Text('MusiDoc')),
+        drawer: Drawer(
+          child: Column(
+            children: [
+              ListView(
+                children: [
+                  ListTile(leading: Icon(Icons.looks_one), title: Text('Alap'), onTap: (){
+                    Navigator.pop(context);
+                    appStateNotifier.onTapDrawer(0);
+                  },),
+                  ListTile(leading: Icon(Icons.looks_two), title: Text('Sthayi'), onTap: (){
+                    Navigator.pop(context);
+                    appStateNotifier.onTapDrawer(1);
+                  },),
+                  ListTile(leading: Icon(Icons.looks_3), title: Text('Taan'), onTap: (){
+                    Navigator.pop(context);
+                    appStateNotifier.onTapDrawer(2);
+                  },),
+                  ListTile(leading: Icon(Icons.looks_4), title: Text('Jhala'), onTap: (){
+                    Navigator.pop(context);
+                    appStateNotifier.onTapDrawer(3);
+                  },),
+                ],
+              ),
+              Expanded(child: Container()),
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text(
+                  'Drawer Footer',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+                ),
               )
-            else
-              BottomOptions(
-                dropDownValue: appStateNotifier.dropDownValue,
-                listOfDropDownValues: const [1, 2, 3, 4, 5],
-                onDropdownChange: (newValue) =>
-                    appStateNotifier.changeDropdownValue(newValue),
-                onMinusTap: () {
-                  appStateNotifier.changeNotes("rem", appStateNotifier.selectedTab);
-                },
-                onPlusTap: () => appStateNotifier.changeNotes("add", appStateNotifier.selectedTab),
-              )
-          ],
-          bottom: TabBar(
-            onTap: appStateNotifier.onTapNavBar,
-            tabs: const [
-              Tab(text: 'Alap'),
-              Tab(text: 'Sthayi'),
-              Tab(text: 'Taan'),
-              Tab(text: 'Jhala'),
             ],
           ),
         ),
