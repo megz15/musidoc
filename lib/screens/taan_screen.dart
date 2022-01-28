@@ -10,68 +10,90 @@ class TaanScreen extends ConsumerStatefulWidget {
   _TaanScreenState createState() => _TaanScreenState();
 }
 
-class _TaanScreenState extends ConsumerState<TaanScreen> with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
-
+class _TaanScreenState extends ConsumerState<TaanScreen> {
+  int dropDownValue = 5;
+  Offset bottomBarPosition = const Offset(20, 70);
   int selectedTaan = 1;
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     final appStateNotifier = ref.watch(appStateProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: List.generate(
-              appStateNotifier.listOfTaans.length,
-              (index) => Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  height: 40,
-                  width: 57,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        selectedTaan = index;
-                      });
-                    },
-                    child: Text((index + 1).toString()),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: List<Widget>.generate(
+                    appStateNotifier.listOfTaans.length,
+                    (index) => Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              selectedTaan = index;
+                            });
+                          },
+                          child: Text((index + 1).toString()),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text('Select Tempo Here'),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.play_circle_outline)),
-              BottomOptions(
-                boxBlurRadius: 10,
-                dropDownValue: 1,
-                listOfDropDownValues: [1, 2, 3, 4, 5],
-                onDropdownChange: (_) {},
-                onMinusTap: () {},
-                onPlusTap: () {},
-              )
-            ],
-          ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: BottomOptions(
+                boxBlurRadius: 0,
+                dropDownValue: dropDownValue,
+                onDropdownChange: (int? changedValue) => setState(() => dropDownValue = changedValue!),
+                onPlusTap: () => appStateNotifier.changeNotes('add', 3, dropDownValue),
+                onMinusTap: () => appStateNotifier.changeNotes('rem', 3, dropDownValue),
+              ),
+            )
+          ],
         ),
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
-            child: Card(
-              elevation: 10,
-              child: buildTaanRow(selectedTaan, appStateNotifier),
-            ),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
+                  child: Card(
+                    elevation: 10,
+                    child: buildTaanRow(selectedTaan, appStateNotifier),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: bottomBarPosition.dy - 50,
+                left: bottomBarPosition.dx,
+                child: Draggable(
+                  feedback: Material(child: BottomOptions()),
+                  childWhenDragging: Opacity(child: BottomOptions(), opacity: 0.3),
+                  child: BottomOptions(
+                    dropDownValue: 1,
+                    onDropdownChange: (_) {},
+                    onMinusTap: () {},
+                    onPlusTap: () {},
+                  ),
+                  onDragEnd: (details) {
+                    setState(() {
+                      bottomBarPosition = Offset(details.offset.dx, MediaQuery.of(context).size.height - details.offset.dy);
+                    });
+                  },
+                ),
+              )
+            ],
           ),
         ),
       ],

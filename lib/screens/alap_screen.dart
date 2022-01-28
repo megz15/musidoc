@@ -10,22 +10,14 @@ class AlapScreen extends ConsumerStatefulWidget {
   _AlapScreenState createState() => _AlapScreenState();
 }
 
-class _AlapScreenState extends ConsumerState<AlapScreen>
-    with AutomaticKeepAliveClientMixin {
-
-  /*int dropDownValue = 5;
-  List<String> listOfAlapNotes = List.filled(20, '', growable: true);
+class _AlapScreenState extends ConsumerState<AlapScreen> {
+  int dropDownValue = 5;
+  Offset bottomBarPosition = const Offset(20, 70);
+  /*List<String> listOfAlapNotes = List.filled(20, '', growable: true);
   List<int> listOfAlapSeparationIndices = [];*/
-
-  //double width = MediaQuery.of(context).size.width;
-  //Offset bottomBarPosition = const Offset(20, 20);
-
-  @override
-  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     final appStateNotifier = ref.watch(appStateProvider);
 
     List<Widget> notesWidgets = List.generate(
@@ -44,8 +36,7 @@ class _AlapScreenState extends ConsumerState<AlapScreen>
                 context: context,
                 builder: (BuildContext buildContext) {
                   return SimpleDialog(title: const Text('Note Options'), children: [
-                    SimpleDialogOption(
-                        child: const Text('Play from here'), onPressed: () {}),
+                    SimpleDialogOption(child: const Text('Play from here'), onPressed: () {}),
                     SimpleDialogOption(
                         child: const Text('Clear note'),
                         onPressed: () {
@@ -107,15 +98,42 @@ class _AlapScreenState extends ConsumerState<AlapScreen>
       }
     }
 
-    return Scrollbar(
-      child: Padding(
-        padding: const EdgeInsets.only(right: 4),
-        child: SingleChildScrollView(
-          child: Wrap(
-            children: notesWidgets,
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: Scrollbar(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 4),
+              child: SingleChildScrollView(
+                child: Wrap(
+                  children: notesWidgets,
+                ),
+              ),
+            ),
           ),
         ),
-      ),
+        //Expanded(child: Container(color: Color.fromRGBO(250, 10, 10, 0.3))),
+        Positioned(
+          bottom: bottomBarPosition.dy - 50,
+          left: bottomBarPosition.dx,
+          child: Draggable(
+            feedback: Material(child: BottomOptions()),
+            childWhenDragging: Opacity(child: BottomOptions(), opacity: 0.3),
+            child: BottomOptions(
+              dropDownValue: dropDownValue,
+              listOfDropDownValues: [20, 10, 7, 5, 3, 2, 1],
+              onDropdownChange: (int? changedValue) => setState(() => dropDownValue = changedValue!),
+              onPlusTap: () => appStateNotifier.changeNotes('add', 1, dropDownValue),
+              onMinusTap: () => appStateNotifier.changeNotes('rem', 1, dropDownValue),
+            ),
+            onDragEnd: (details) {
+              setState(() {
+                bottomBarPosition = Offset(details.offset.dx, MediaQuery.of(context).size.height - details.offset.dy);
+              });
+            },
+          ),
+        )
+      ],
     );
   }
 }

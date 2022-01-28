@@ -10,14 +10,12 @@ class SthayiScreen extends ConsumerStatefulWidget {
   _SthayiScreenState createState() => _SthayiScreenState();
 }
 
-class _SthayiScreenState extends ConsumerState<SthayiScreen>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
+class _SthayiScreenState extends ConsumerState<SthayiScreen> {
+  int dropDownValue = 5;
+  Offset bottomBarPosition = const Offset(20, 70);
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     final appStateNotifier = ref.watch(appStateProvider);
 
     List<List<Widget>> notesWidgets = List.generate(
@@ -122,21 +120,44 @@ class _SthayiScreenState extends ConsumerState<SthayiScreen>
       }
     }
 
-    return Padding(
-      padding: const EdgeInsets.only(right: 4),
-      child: SingleChildScrollView(
-        child: ListView.separated(
-          shrinkWrap: true,
-          itemBuilder: (BuildContext context, int index) {
-            return Wrap(
-              children: notesWidgets[index],
-            );
-          },
-          separatorBuilder: (BuildContext context, int index) =>
-              const Divider(),
-          itemCount: notesWidgets.length,
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: ListView.separated(
+              shrinkWrap: true,
+              itemBuilder: (BuildContext context, int index) {
+                return Wrap(
+                  children: notesWidgets[index],
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) =>
+                  const Divider(),
+              itemCount: notesWidgets.length,
+            ),
+          ),
         ),
-      ),
+        Positioned(
+          bottom: bottomBarPosition.dy - 50,
+          left: bottomBarPosition.dx,
+          child: Draggable(
+            feedback: Material(child: BottomOptions()),
+            childWhenDragging: Opacity(child: BottomOptions(), opacity: 0.3),
+            child: BottomOptions(
+              dropDownValue: dropDownValue,
+              onDropdownChange: (int? changedValue) => setState(() => dropDownValue = changedValue!),
+              onPlusTap: () => appStateNotifier.changeNotes('add', 2, dropDownValue),
+              onMinusTap: () => appStateNotifier.changeNotes('rem', 2, dropDownValue),
+            ),
+            onDragEnd: (details) {
+              setState(() {
+                bottomBarPosition = Offset(details.offset.dx, MediaQuery.of(context).size.height - details.offset.dy);
+              });
+            },
+          ),
+        )
+      ],
     );
   }
 }

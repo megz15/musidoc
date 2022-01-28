@@ -7,6 +7,7 @@ class NotesScreen extends ConsumerWidget {
   NotesScreen({Key? key}) : super(key: key);
 
   final List<Widget> _pages = [
+    Container(color: Color.fromRGBO(250, 10, 10, 0.3)),
     AlapScreen(),
     SthayiScreen(),
     TaanScreen(),
@@ -21,41 +22,28 @@ class NotesScreen extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(title: const Text('MusiDoc')),
         drawer: Drawer(
-          child: Column(
+          child: ListView(
             children: [
-              ListView(
-                children: [
-                  ListTile(leading: Icon(Icons.looks_one), title: Text('Alap'), onTap: (){
-                    Navigator.pop(context);
-                    appStateNotifier.onTapDrawer(0);
-                  },),
-                  ListTile(leading: Icon(Icons.looks_two), title: Text('Sthayi'), onTap: (){
-                    Navigator.pop(context);
-                    appStateNotifier.onTapDrawer(1);
-                  },),
-                  ListTile(leading: Icon(Icons.looks_3), title: Text('Taan'), onTap: (){
-                    Navigator.pop(context);
-                    appStateNotifier.onTapDrawer(2);
-                  },),
-                  ListTile(leading: Icon(Icons.looks_4), title: Text('Jhala'), onTap: (){
-                    Navigator.pop(context);
-                    appStateNotifier.onTapDrawer(3);
-                  },),
-                ],
-              ),
-              Expanded(child: Container()),
-              const DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-                child: Text(
-                  'Drawer Footer',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                  ),
-                ),
-              )
+              ListTile(leading: Icon(Icons.looks_one), title: Text('Documentation'), onTap: (){
+                Navigator.pop(context);
+                appStateNotifier.onTapDrawer(0);
+              },),
+              ListTile(leading: Icon(Icons.looks_one), title: Text('Alap'), onTap: (){
+                Navigator.pop(context);
+                appStateNotifier.onTapDrawer(1);
+              },),
+              ListTile(leading: Icon(Icons.looks_two), title: Text('Sthayi'), onTap: (){
+                Navigator.pop(context);
+                appStateNotifier.onTapDrawer(2);
+              },),
+              ListTile(leading: Icon(Icons.looks_3), title: Text('Taan'), onTap: (){
+                Navigator.pop(context);
+                appStateNotifier.onTapDrawer(3);
+              },),
+              ListTile(leading: Icon(Icons.looks_4), title: Text('Jhala'), onTap: (){
+                Navigator.pop(context);
+                appStateNotifier.onTapDrawer(4);
+              },),
             ],
           ),
         ),

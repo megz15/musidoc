@@ -4,10 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class NotesScreenStateManager extends ChangeNotifier {
   //GLobal
   int _selectedTab = 0;
-  int _dropDownValue = 5;
-
   int get selectedTab => _selectedTab;
-  int get dropDownValue => _dropDownValue;
 
   List<String> _notes = ['S', 'Rb', 'R', 'Gb', 'G', 'M', 'M#', 'P', 'Db', 'D', 'Nb', 'N'];
   List<String> get notes => _notes;
@@ -44,7 +41,7 @@ class NotesScreenStateManager extends ChangeNotifier {
   List<List<String>> _listOfTaans = [];
   List<List<String>> get listOfTaans => _listOfTaans;
 
-  void changeAlapNotes(String addOrRem) {
+  /*void changeAlapNotes(String addOrRem) {
     switch (addOrRem) {
       case "add":
         _listOfAlapNotes.addAll(List.filled(_dropDownValue, ''));
@@ -55,41 +52,48 @@ class NotesScreenStateManager extends ChangeNotifier {
         break;
     }
     notifyListeners();
-  }
+  }*/
 
-  void changeNotes(String addOrRem, int tab) {
+  void changeNotes(String addOrRem, int tab, int changeBy) {
     var notes = [];
     switch (tab) {
-      case 1: notes = _listOfSthayiNotes; break;
-      case 2: notes = _listOfTaans; break;
+      case 1: notes = _listOfAlapNotes; break;
+      case 2: notes = _listOfSthayiNotes; break;
+      case 3: notes = _listOfTaans; break;
     }
     switch (addOrRem) {
       case "add":
         /*_listOfSthayiNotes
             .addAll(List.filled(_dropDownValue, List.filled(totalBeats, '')));*/
-        for (var i = 0; i < _dropDownValue; i++) {
+      if (tab != 1){
+        for (var i = 0; i < changeBy; i++) {
           notes.add(List.filled(totalBeats, ''));
-        }
+        }} else {
+        _listOfAlapNotes.addAll(List.filled(changeBy, ''));
+      }
         break;
       case "rem":
-        if (notes.length < _dropDownValue) {
+        if (tab != 1){
+        if (notes.length < changeBy) {
           notes.clear();
         } else {
-          notes.removeRange(notes.length - _dropDownValue, notes.length);
+          notes.removeRange(notes.length - changeBy, notes.length);
+        }} else {
+          _listOfAlapNotes.length < changeBy ? _listOfAlapNotes.clear() : _listOfAlapNotes.removeRange(_listOfAlapNotes.length - changeBy, _listOfAlapNotes.length);
+          _listOfAlapSeparationIndices.removeWhere((element) => element > (_listOfAlapNotes.length - changeBy));
         }
         break;
     }
     notifyListeners();
   }
 
-  void changeDropdownValue(String? newValue) {
+  /*void changeDropdownValue(String? newValue) {
     _dropDownValue = int.parse(newValue ?? '5');
     notifyListeners();
-  }
+  }*/
 
   void onTapDrawer(int index) {
     _selectedTab = index;
-    _dropDownValue = 5;
     notifyListeners();
   }
 }

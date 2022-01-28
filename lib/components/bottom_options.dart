@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 
 class BottomOptions extends StatefulWidget {
   final double boxBlurRadius;
-  final int? dropDownValue;
+  final int dropDownValue;
   final List<int>? listOfDropDownValues;
   final void Function()? onMinusTap;
   final void Function()? onPlusTap;
-  final void Function(String?)? onDropdownChange;
-  const BottomOptions(
-      {Key? key,
-        this.boxBlurRadius = 0,
-      this.dropDownValue,
-        this.listOfDropDownValues,
-      this.onDropdownChange,
-      this.onMinusTap,
-      this.onPlusTap})
-      : super(key: key);
+  final void Function(int?)? onDropdownChange;
+  const BottomOptions({
+    Key? key,
+    this.boxBlurRadius = 10,
+    this.dropDownValue = 5,
+    this.listOfDropDownValues = const [5, 4, 3, 2, 1],
+    this.onDropdownChange,
+    this.onMinusTap,
+    this.onPlusTap,
+  }) : super(key: key);
 
   @override
   State<BottomOptions> createState() => _BottomOptionsState();
@@ -49,12 +49,11 @@ class _BottomOptionsState extends State<BottomOptions> {
                 onPressed: widget.onMinusTap,
                 icon: Icon(Icons.remove_circle),
                 color: Colors.red),
-            DropdownButton<String>(
-              value: widget.dropDownValue.toString(),
-              items: (widget.listOfDropDownValues ?? [20, 10, 7, 5, 3, 2, 1])
-                  .map((int value) {
+            DropdownButton<int>(
+              value: widget.dropDownValue,
+              items: (widget.listOfDropDownValues!).map((int value) {
                 return DropdownMenuItem(
-                  value: value.toString(),
+                  value: value,
                   child: Text(value.toString()),
                 );
               }).toList(),
